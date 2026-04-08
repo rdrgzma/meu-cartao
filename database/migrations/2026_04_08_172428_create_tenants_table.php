@@ -15,6 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('nome');
             $table->string('slug')->unique();
+            $table->string('documento')->nullable();
+            $table->string('telefone')->nullable();
+            $table->string('endereco')->nullable();
+            $table->string('cidade')->nullable();
+            $table->string('estado', 2)->nullable();
             $table->timestamps();
         });
     }

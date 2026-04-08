@@ -8,8 +8,8 @@ use App\Models\Traits\Tenantable;
 
 class Especialidade extends Model
 {
-    use HasFactory, Tenantable;
-    protected $fillable = ['nome','ativo'];
+    use HasFactory, Tenantable, SoftDeletes;
+    protected $fillable = ['nome','ativo',];
 
     public function planos()
     {

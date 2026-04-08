@@ -8,7 +8,7 @@ use App\Models\Traits\Tenantable;
 
 class Plano extends Model
 {
-    use HasFactory, Tenantable;
+    use HasFactory, Tenantable, SoftDeletes;
     protected $fillable = ['tenant_id','nome','valor','descricao','ativo'];
 
     public function tenant()

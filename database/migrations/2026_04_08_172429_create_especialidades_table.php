@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('especialidades', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
+            $table->foreignId('tenant_id')->constrained()->cascadeOnDelete();
             $table->boolean('ativo')->default(true);
                         $table->softDeletes();
 
