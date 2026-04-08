@@ -1,13 +1,11 @@
 {
     "agents": [
-        "junie",
-        "cursor",
+        "amp",
+        "claude_code",
+        "gemini",
         "opencode"
     ],
     "guidelines": true,
-    "mcp": true,
-    "nightwatch_mcp": false,
-    "sail": false,
     "skills": [
         "fortify-development",
         "laravel-best-practices",
