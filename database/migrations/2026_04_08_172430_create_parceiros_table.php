@@ -18,6 +18,8 @@ return new class extends Migration
     {
         Schema::create('parceiros', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained()->cascadeOnDelete();
+
             $table->string('nome_fantasia');
             $table->string('razao_social')->nullable();
             $table->string('documento')->nullable();

@@ -13,10 +13,19 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('parceiro_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('cliente_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('status', ['ativo','inativo'])->default('ativo');
+            $table->enum('tipo', ['admin','usuario'])->default('usuario');
+            $table->string('telefone')->nullable();
+            $table->string('documento')->nullable();
+            $table->string('endereco')->nullable();
+            $table->enum('funcao', ['sistema','admin','parceiro','cliente'])->default('cliente');
             $table->rememberToken();
             $table->timestamps();
         });

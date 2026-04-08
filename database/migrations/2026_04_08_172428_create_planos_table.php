@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('planos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained()->cascadeOnDelete();
+
             $table->string('nome');
             $table->decimal('valor', 10, 2);
             $table->text('descricao')->nullable();
