@@ -1,0 +1,83 @@
+id: cartao-mais-saude-rules
+
+# CONTEXTO DO PROJETO
+Projeto SaaS de gestão de cartão de benefícios em saúde.
+Arquitetura baseada em Laravel 13, PHP 8.4, Livewire v4 e Tailwind v4.
+
+# STACK
+- Laravel 13
+- PHP 8.4
+- Livewire v4 (classe + view separada)
+- Blade
+- TailwindCSS v4
+- Filament v5 (quando aplicável)
+- Pest (testes)
+
+# ARQUITETURA
+- Controllers NÃO possuem regra de negócio
+- Regras ficam em Services (app/Services)
+- Models sem lógica complexa
+- Uso obrigatório de Service Layer
+
+# MULTI-TENANT
+- Todas entidades possuem tenant_id
+- Usar TenantScope automaticamente
+- Nunca acessar dados sem tenant
+- Middleware resolve tenant via header, subdomínio ou usuário
+
+# LIVEWIRE (REGRA OBRIGATÓRIA)
+- Componentes são multi-file (classe + view)
+- Classes ficam em:
+  app/Livewire/{Modulo}/{Componente}.php
+
+- Views ficam em:
+  resources/views/livewire/{modulo}/{componente}.blade.php
+
+- Nomeação:
+  Classe: StudlyCase
+  View: kebab-case
+
+- NÃO usar componentes inline
+
+# PADRÕES DE CÓDIGO
+- Services: XxxService
+- Traits: reutilização
+- Scopes: isolamento multi-tenant
+- snake_case banco
+- camelCase código
+
+# REGRAS DE NEGÓCIO IMPORTANTES
+- Cliente:
+  - CPF único por tenant
+  - CNS opcional (validar se informado)
+  - status: ativo, inadimplente, cancelado
+
+- Elegibilidade:
+  - cliente ativo
+  - plano cobre especialidade
+  - fora da carência
+
+- Token:
+  - único
+  - expira em 30 dias
+
+# CARTEIRA VIRTUAL
+- Deve conter:
+  - nome
+  - cpf
+  - cns
+  - plano
+  - status
+  - QR Code com token
+
+# DIRETRIZES PARA IA
+- Sempre reutilizar Services existentes
+- Nunca duplicar lógica
+- Criar código limpo e direto
+- Evitar comentários desnecessários
+- Preferir simplicidade
+
+# PROIBIDO
+- lógica em controller
+- queries sem tenant
+- duplicação de regra de negócio

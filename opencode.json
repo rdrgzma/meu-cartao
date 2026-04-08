@@ -1,5 +1,83 @@
 {
     "$schema": "https://opencode.ai/config.json",
+    "project": {
+        "name": "cartao-mais-saude",
+        "description": "SaaS de gestão de clientes para cartão de benefícios em saúde com validação de elegibilidade e carteira virtual"
+    },
+    "stack": {
+        "backend": "laravel 13",
+        "php": "8.4",
+        "frontend": "blade + livewire v4 + tailwind v4",
+        "admin": "filament v5",
+        "tests": "pest"
+    },
+    "architecture": {
+        "pattern": "mvc + service layer",
+        "services_path": "app/Services",
+        "rules": [
+            "controllers must not contain business logic",
+            "business rules must be implemented in services",
+            "models must be thin",
+            "reuse existing services before creating new ones"
+        ]
+    },
+    "multi_tenant": {
+        "enabled": true,
+        "column": "tenant_id",
+        "scope": "TenantScope",
+        "middleware": "TenantMiddleware",
+        "rules": [
+            "all queries must be tenant scoped",
+            "never access data without tenant context"
+        ]
+    },
+    "livewire": {
+        "mode": "multi-file",
+        "class_path": "app/Livewire",
+        "view_path": "resources/views/livewire",
+        "structure": "module based folders",
+        "rules": [
+            "do not use inline components",
+            "organize components by domain (Cliente, Plano, etc)",
+            "class and view must mirror folder structure",
+            "use Livewire v4 syntax"
+        ]
+    },
+    "business_rules": {
+        "cliente": [
+            "cpf must be unique per tenant",
+            "cns is optional but must be validated if present",
+            "status values: ativo, inadimplente, cancelado"
+        ],
+        "elegibilidade": [
+            "cliente must be ativo",
+            "plano must cover especialidade",
+            "carencia must be respected"
+        ],
+        "financeiro": [
+            "mensalidade vencida becomes atrasado",
+            "cliente with atraso becomes inadimplente"
+        ],
+        "token": [
+            "must be unique",
+            "expires in 30 days",
+            "used for qr code validation"
+        ]
+    },
+    "paths": {
+        "models": "app/Models",
+        "services": "app/Services",
+        "controllers": "app/Http/Controllers",
+        "livewire": "app/Livewire",
+        "views": "resources/views/livewire"
+    },
+    "ai_guidelines": [
+        "prefer simple and clear code",
+        "avoid unnecessary abstractions",
+        "do not duplicate business logic",
+        "always follow project structure",
+        "generate production-ready code"
+    ],
     "mcp": {
         "laravel-boost": {
             "type": "local",
