@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('carencias', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('plano_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('especialidade_id')->constrained()->cascadeOnDelete();
-            $table->integer('dias')->default(0);
-            $table->unique(['plano_id','especialidade_id']);
-            $table->timestamps();
-             $table->unique(['plano_id','especialidade_id']);
-        });
+        if (! Schema::hasTable('carencias')) {
+            Schema::create('carencias', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('plano_id')->constrained()->cascadeOnDelete();
+                $table->foreignId('especialidade_id')->constrained()->cascadeOnDelete();
+                $table->integer('dias')->default(0);
+                $table->unique(['plano_id', 'especialidade_id']);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

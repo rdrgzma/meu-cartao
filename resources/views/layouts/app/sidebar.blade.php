@@ -15,6 +15,61 @@
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="users" :href="route('clientes.index')" :current="request()->routeIs('clientes.*')" wire:navigate>
+                        {{ __('Clientes') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="academic-cap" :href="route('especialidades.index')" :current="request()->routeIs('especialidades.*')" wire:navigate>
+                        {{ __('Especialidades') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="list-bullet" :href="route('planos.index')" :current="request()->routeIs('planos.*')" wire:navigate>
+                        {{ __('Planos') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="banknotes" :href="route('financeiro.index')" :current="request()->routeIs('financeiro.*')" wire:navigate>
+                        {{ __('Financeiro') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="clock" :href="route('carencias.index')" :current="request()->routeIs('carencias.*')" wire:navigate>
+                        {{ __('Carências') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="building-office-2" :href="route('parceiros.index')" :current="request()->routeIs('parceiros.*')" wire:navigate>
+                        {{ __('Parceiros') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="shield-check" :href="route('validacao.painel')" :current="request()->routeIs('validacao.*')" wire:navigate>
+                        {{ __('Painel de Validação') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                <flux:sidebar.group label="Comunicação">
+                    <flux:sidebar.item icon="chat-bubble-left-right" :href="route('notificacoes.config')" :current="request()->routeIs('notificacoes.config')" wire:navigate>
+                        {{ __('WhatsApp Templates') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="document-text" :href="route('notificacoes.logs')" :current="request()->routeIs('notificacoes.logs')" wire:navigate>
+                        {{ __('Logs de Envio') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                <flux:sidebar.group label="Relatórios">
+                    <flux:sidebar.item icon="presentation-chart-line" :href="route('relatorios.financeiro')" :current="request()->routeIs('relatorios.financeiro')" wire:navigate>
+                        {{ __('Financeiro') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="wallet" :href="route('financeiro.pagamentos')" :current="request()->routeIs('financeiro.pagamentos')" wire:navigate>
+                        {{ __('Pagamentos') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                <flux:sidebar.group label="Sistema">
+                    <flux:sidebar.item icon="user-group" :href="route('sistema.usuarios')" :current="request()->routeIs('sistema.usuarios')" wire:navigate>
+                        {{ __('Usuários') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="building-library" :href="route('sistema.unidades')" :current="request()->routeIs('sistema.unidades')" wire:navigate>
+                        {{ __('Unidades (Tenants)') }}
+                    </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 

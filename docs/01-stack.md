@@ -14,7 +14,7 @@
 - FilamentPHP v5 (opcional, recomendado)
 
 ## Banco
-- MySQL ou PostgreSQL
+- Sqlite em desenvolvimento e MySQL ou PostgreSQL em produção
 
 ## Testes
 - Pest

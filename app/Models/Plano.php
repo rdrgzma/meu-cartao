@@ -2,19 +2,22 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Tenantable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\Tenantable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Plano extends Model
 {
-    use HasFactory, Tenantable, SoftDeletes;
-    protected $fillable = ['tenant_id','nome','valor','descricao','ativo'];
+    use HasFactory, SoftDeletes, Tenantable;
+
+    protected $fillable = ['tenant_id', 'nome', 'valor', 'descricao', 'ativo'];
 
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
     }
+
     public function especialidades()
     {
         return $this->belongsToMany(Especialidade::class, 'plano_especialidades')

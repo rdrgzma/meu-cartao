@@ -11,17 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('logs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('tenant_id')->nullable()->constrained()->nullOnDelete();
+        if (! Schema::hasTable('logs')) {
+            Schema::create('logs', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('tenant_id')->nullable()->constrained()->nullOnDelete();
 
-            $table->string('acao');
-            $table->string('entidade');
-            $table->unsignedBigInteger('entidade_id')->nullable();
+                $table->string('acao');
+                $table->string('entidade');
+                $table->unsignedBigInteger('entidade_id')->nullable();
 
-            $table->json('dados')->nullable();
-            $table->timestamps();
-        });
+                $table->json('dados')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

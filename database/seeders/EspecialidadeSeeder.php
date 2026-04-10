@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Especialidade;
+use App\Models\Tenant;
 use Illuminate\Database\Seeder;
 class EspecialidadeSeeder extends Seeder
 {
@@ -22,10 +23,9 @@ class EspecialidadeSeeder extends Seeder
         ];
 
         foreach ($especialidades as $nome) {
-            Especialidade::create([
-                'tenant_id' => $tenant->id,
-                'nome' => $nome
-            ]);
+            Especialidade::firstOrCreate(
+                ['tenant_id' => $tenant->id, 'nome' => $nome]
+            );
         }
     }
 }

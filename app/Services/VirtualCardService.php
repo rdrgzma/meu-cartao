@@ -16,7 +16,8 @@ class VirtualCardService
 
     public function gerarCarteira(Cliente $cliente): array
     {
-        $cliente->load('plano.especialidades');
+        // Garante que as relações necessárias estão carregadas
+        $cliente->load(['plano.especialidades', 'plano.carencias']);
 
         $token = $this->gerarOuRecuperarToken($cliente);
 
@@ -30,7 +31,7 @@ class VirtualCardService
             ],
 
             'plano' => [
-                'nome' => $cliente->plano?->nome,
+                'nome' => $cliente->plano?->nome ?? 'Sem Plano',
             ],
 
             'qr_code' => route('api.validacao', [
@@ -63,14 +64,23 @@ class VirtualCardService
 
     protected function mapearEspecialidades(Cliente $cliente): array
     {
-        return $cliente->plano->especialidades->map(function ($esp) use ($cliente) {
+        if (! $cliente->plano || ! $cliente->plano->especialidades) {
+            return [];
+        }
 
+        return $cliente->plano->especialidades->map(function ($esp) use ($cliente) {
             $validacao = $this->validador->validar($cliente, $esp->id);
+            
+            $carencia = $cliente->plano->carencias
+                ->where('especialidade_id', $esp->id)
+                ->first();
 
             return [
                 'id' => $esp->id,
                 'nome' => $esp->nome,
                 'status' => $validacao['status'],
+                'dias_carencia' => $carencia ? $carencia->dias : 0,
+                'liberado_em' => $validacao['liberado_em'] ?? null,
             ];
         })->toArray();
     }

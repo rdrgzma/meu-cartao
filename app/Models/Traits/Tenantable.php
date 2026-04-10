@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Models\Scopes;
+namespace App\Models\Traits;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Scope;
+use App\Models\Scopes\TenantScope;
 
 trait Tenantable
 {

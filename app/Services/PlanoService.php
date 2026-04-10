@@ -1,23 +1,99 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\Plano;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class PlanoService
 {
-    public function vincularEspecialidades(Plano $plano, array $dados): void
+    /**
+     * Get paginated plans with advanced filters.
+     */
+    public function paginate(int $perPage = 10, ?string $search = null, ?string $status = null, ?string $dataInicio = null, ?string $dataFim = null): LengthAwarePaginator
     {
-        // $dados = [especialidade_id => ['tipo_cobertura' => 'total']]
-        $plano->especialidades()->sync($dados);
+        return Plano::query()
+            ->when($search, fn ($q) => $q->where('nome', 'like', "%{$search}%"))
+            ->when($status, fn ($q) => $q->where('status', $status))
+            ->when($dataInicio, fn ($q) => $q->whereDate('created_at', '>=', $dataInicio))
+            ->when($dataFim, fn ($q) => $q->whereDate('created_at', '<=', $dataFim))
+            ->withCount('especialidades')
+            ->orderBy('nome')
+            ->paginate($perPage);
     }
 
-    public function definirCarencias(Plano $plano, array $carencias): void
+    /**
+     * Get all active plans.
+     */
+    public function getActive(): Collection
     {
-        foreach ($carencias as $especialidadeId => $dias) {
-            $plano->carencias()->updateOrCreate(
-                ['especialidade_id' => $especialidadeId],
-                ['dias' => $dias]
-            );
+        return Plano::where('ativo', true)->orderBy('nome')->get();
+    }
+
+    /**
+     * Create a new plan with relationships.
+     */
+    public function criar(array $data, array $especialidades = [], array $carencias = []): Plano
+    {
+        return DB::transaction(function () use ($data, $especialidades, $carencias) {
+            $plano = Plano::create($data);
+
+            if (!empty($especialidades)) {
+                $this->syncRelationships($plano, $especialidades, $carencias);
+            }
+
+            return $plano;
+        });
+    }
+
+    /**
+     * Update an existing plan with relationships.
+     */
+    public function update(Plano $plano, array $data, array $especialidades = [], array $carencias = []): bool
+    {
+        return DB::transaction(function () use ($plano, $data, $especialidades, $carencias) {
+            $updated = $plano->update($data);
+
+            $this->syncRelationships($plano, $especialidades, $carencias);
+
+            return $updated;
+        });
+    }
+
+    /**
+     * Sync specialties and carencias.
+     */
+    protected function syncRelationships(Plano $plano, array $especialidades, array $carencias): void
+    {
+        // Sincroniza especialidades
+        $syncData = [];
+        foreach ($especialidades as $espId) {
+            $syncData[$espId] = ['tipo_cobertura' => 'total'];
         }
+        $plano->especialidades()->sync($syncData);
+
+        // Sincroniza carências
+        // Primeiro remove carências de especialidades que foram desmarcadas
+        $plano->carencias()->whereNotIn('especialidade_id', $especialidades)->delete();
+
+        // Atualiza ou cria as novas carências
+        foreach ($carencias as $especialidadeId => $dias) {
+            if (in_array((string)$especialidadeId, $especialidades)) {
+                $plano->carencias()->updateOrCreate(
+                    ['especialidade_id' => $especialidadeId],
+                    ['dias' => $dias ?? 0]
+                );
+            }
+        }
+    }
+
+    /**
+     * Delete a plan.
+     */
+    public function delete(Plano $plano): bool
+    {
+        return $plano->delete();
     }
 }

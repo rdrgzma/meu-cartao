@@ -19,7 +19,7 @@ class ValidadorElegibilidadeService
 
         // 2. Verifica cobertura
         $cobertura = $plano->especialidades()
-            ->where('especialidade_id', $especialidadeId)
+            ->wherePivot('especialidade_id', $especialidadeId)
             ->first();
 
         if (!$cobertura) {
