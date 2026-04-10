@@ -6,10 +6,19 @@ use App\Models\Plano;
 use App\Services\PlanoService;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app')]
 class Index extends Component
 {
     use WithPagination;
+    
+    public function mount(): void
+    {
+        if (auth()->user()->funcao === 'parceiro' && !auth()->user()->can_access_planos) {
+            abort(403, 'Acesso restrito aos Planos.');
+        }
+    }
 
     public string $search = '';
 

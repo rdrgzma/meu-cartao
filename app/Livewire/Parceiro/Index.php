@@ -6,7 +6,9 @@ use App\Models\Parceiro;
 use App\Services\ParceiroService;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app')]
 class Index extends Component
 {
     use WithPagination;

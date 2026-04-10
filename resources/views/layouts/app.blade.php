@@ -141,6 +141,12 @@
                 <h2 class="hidden sm:block text-sm font-semibold text-zinc-500 dark:text-zinc-400">{{ $title }}</h2>
             @endif
 
+            @if(auth()->user()->funcao === 'sistema')
+                <div class="ml-4">
+                    <livewire:sistema.tenant-selector />
+                </div>
+            @endif
+
             {{-- Spacer --}}
             <div class="flex-1"></div>
 

@@ -41,21 +41,33 @@
                 <th class="px-6 py-4 font-semibold">{{ __('Nome') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('E-mail') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Tipo') }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __('Organização') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Status') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Criação') }}</th>
+                <th class="px-6 py-4 font-semibold text-right">{{ __('Ações') }}</th>
             </x-slot>
-
+ 
             @foreach ($users as $user)
                 <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors text-sm">
                     <td class="px-6 py-4 font-semibold text-zinc-900 dark:text-white">{{ $user->name }}</td>
                     <td class="px-6 py-4 text-zinc-600 dark:text-zinc-400">{{ $user->email }}</td>
-                    <td class="px-6 py-4"><x-badge color="zinc">{{ ucfirst($user->tipo) }}</x-badge></td>
+                    <td class="px-6 py-4"><x-badge color="zinc">{{ ucfirst($user->funcao) }}</x-badge></td>
+                    <td class="px-6 py-4 text-zinc-500 text-xs">
+                        {{ $user->tenant?->nome ?? __('Suporte Global') }}
+                    </td>
                     <td class="px-6 py-4">
                         <x-badge :color="$user->status === 'ativo' ? 'green' : 'red'">{{ ucfirst($user->status) }}</x-badge>
                     </td>
                     <td class="px-6 py-4 text-zinc-500">{{ $user->created_at->format('d/m/Y') }}</td>
+                    <td class="px-6 py-4 text-right">
+                        <x-button variant="ghost" size="sm" wire:click="edit({{ $user->id }})">
+                            {{ __('Gerenciar') }}
+                        </x-button>
+                    </td>
                 </tr>
             @endforeach
         </x-table>
     </div>
+
+    <livewire:sistema.user-form />
 </div>

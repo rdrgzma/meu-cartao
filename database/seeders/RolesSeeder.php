@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Cliente;
+use App\Models\Parceiro;
+use App\Models\Plano;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -14,60 +17,84 @@ class RolesSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Criar Tenant Principal
-        $tenantMatriz = Tenant::firstOrCreate(['slug' => 'matriz'], [
-            'nome' => 'Matriz Cartão Mais Saúde',
-            'documento' => '00.000.000/0001-00',
-            'cidade' => 'São Paulo',
-            'estado' => 'SP',
-        ]);
-
-        $tenantUnidade = Tenant::firstOrCreate(['slug' => 'unidade-teste'], [
-            'nome' => 'CMS Unidade Centro',
-            'documento' => '11.111.111/0001-11',
-            'cidade' => 'Curitiba',
-            'estado' => 'PR',
-        ]);
-
         $password = Hash::make('password');
 
-        // 2. Super Admin (Acesso total ao sistema)
-        User::firstOrCreate(['email' => 'sistema@cartaomaisaude.com.br'], [
+        // 1. Super Admin (Acesso total ao sistema - Vê tudo)
+        User::updateOrCreate(['email' => 'sistema@cartaomaisaude.com.br'], [
             'name' => 'Suporte Sistema',
             'password' => $password,
             'tipo' => 'admin',
             'funcao' => 'sistema',
             'status' => 'ativo',
+            'tenant_id' => null,
         ]);
 
-        // 3. Admin de Unidade (Gestor de uma unidade específica)
-        User::firstOrCreate(['email' => 'admin@matriz.com.br'], [
-            'name' => 'Administrador Matriz',
-            'tenant_id' => $tenantMatriz->id,
-            'password' => $password,
-            'tipo' => 'admin',
-            'funcao' => 'admin',
-            'status' => 'ativo',
-        ]);
+        $tenantsInfo = [
+            'matriz' => 'Matriz Cartão Mais Saúde',
+            'unidade-centro' => 'CMS Unidade Centro',
+            'unidade-sul' => 'CMS Unidade Sul',
+            'unidade-norte' => 'CMS Unidade Norte',
+            'unidade-oeste' => 'CMS Unidade Oeste',
+        ];
 
-        // 4. Operador de Parceiro (Acesso ao painel de validação)
-        User::firstOrCreate(['email' => 'clinica@parceiro.com.br'], [
-            'name' => 'Clínica Vida - Parceiro',
-            'tenant_id' => $tenantMatriz->id,
-            'password' => $password,
-            'tipo' => 'usuario',
-            'funcao' => 'parceiro',
-            'status' => 'ativo',
-        ]);
+        foreach ($tenantsInfo as $slug => $nome) {
+            $tenant = Tenant::updateOrCreate(['slug' => $slug], [
+                'nome' => $nome,
+                'documento' => fake()->numerify('##.###.###/0001-##'),
+                'cidade' => fake()->city,
+                'estado' => fake()->stateAbbr,
+            ]);
 
-        // 5. Cliente (Acesso à carteira virtual)
-        User::firstOrCreate(['email' => 'cliente@teste.com.br'], [
-            'name' => 'João Silva - Cliente',
-            'tenant_id' => $tenantMatriz->id,
-            'password' => $password,
-            'tipo' => 'usuario',
-            'funcao' => 'cliente',
-            'status' => 'ativo',
-        ]);
+            // Plano padrão para o tenant
+            $planoPadrao = Plano::factory()->create(['tenant_id' => $tenant->id, 'nome' => 'Plano Controle '.$nome]);
+
+            // 2. Admin de Unidade (Gestor de uma unidade específica)
+            User::updateOrCreate(['email' => "admin@{$slug}.com.br"], [
+                'name' => "Gestor {$nome}",
+                'tenant_id' => $tenant->id,
+                'password' => $password,
+                'tipo' => 'admin',
+                'funcao' => 'admin',
+                'status' => 'ativo',
+            ]);
+
+            // 3. Parceiro (Operador)
+            $parceiro = Parceiro::factory()->create([
+                'tenant_id' => $tenant->id,
+                'nome_fantasia' => 'Clínica '.fake()->firstName.' - '.$nome,
+            ]);
+
+            User::updateOrCreate(['email' => "parceiro@{$slug}.com.br"], [
+                'name' => 'Atendente '.$parceiro->nome_fantasia,
+                'tenant_id' => $tenant->id,
+                'parceiro_id' => $parceiro->id,
+                'password' => $password,
+                'tipo' => 'usuario',
+                'funcao' => 'parceiro',
+                'status' => 'ativo',
+            ]);
+
+            // 4. Cliente (Assinante)
+            $cliente = Cliente::factory()->create([
+                'tenant_id' => $tenant->id,
+                'plano_id' => $planoPadrao->id,
+                'nome' => 'Cliente '.fake()->name.' ('.$nome.')',
+            ]);
+
+            User::updateOrCreate(['email' => "cliente@{$slug}.com.br"], [
+                'name' => $cliente->nome,
+                'tenant_id' => $tenant->id,
+                'cliente_id' => $cliente->id,
+                'password' => $password,
+                'tipo' => 'usuario',
+                'funcao' => 'cliente',
+                'status' => 'ativo',
+            ]);
+
+            // Dados Extras para testar a segregação
+            Plano::factory(2)->create(['tenant_id' => $tenant->id]);
+            Parceiro::factory(2)->create(['tenant_id' => $tenant->id]);
+            Cliente::factory(5)->create(['tenant_id' => $tenant->id, 'plano_id' => $planoPadrao->id]);
+        }
     }
 }

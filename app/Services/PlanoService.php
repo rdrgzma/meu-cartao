@@ -20,6 +20,7 @@ class PlanoService
             ->when($dataInicio, fn ($q) => $q->whereDate('created_at', '>=', $dataInicio))
             ->when($dataFim, fn ($q) => $q->whereDate('created_at', '<=', $dataFim))
             ->withCount('especialidades')
+            ->with('tenant')
             ->orderBy('nome')
             ->paginate($perPage);
     }

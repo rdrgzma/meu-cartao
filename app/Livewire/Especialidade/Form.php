@@ -50,8 +50,13 @@ class Form extends Component
                 $service->update($this->especialidade, $data);
                 $msg = 'Especialidade atualizada com sucesso.';
             } else {
+                if (auth()->user()->funcao === 'parceiro') {
+                    $data['ativo'] = false;
+                }
                 $service->criar($data);
-                $msg = 'Especialidade cadastrada com sucesso.';
+                $msg = auth()->user()->funcao === 'parceiro' 
+                    ? 'Especialidade sugerida com sucesso. Aguardando ativação pelo administrador.'
+                    : 'Especialidade cadastrada com sucesso.';
             }
 
             $this->dispatch('especialidadeUpdated');

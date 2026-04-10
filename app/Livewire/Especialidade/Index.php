@@ -6,10 +6,19 @@ use App\Models\Especialidade;
 use App\Services\EspecialidadeService;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app')]
 class Index extends Component
 {
     use WithPagination;
+    
+    public function mount(): void
+    {
+        if (auth()->user()->funcao === 'parceiro' && !auth()->user()->can_access_especialidades) {
+            abort(403, 'Acesso restrito às Especialidades.');
+        }
+    }
 
     public string $search = '';
 
@@ -43,6 +52,10 @@ class Index extends Component
 
     public function toggleStatus(int $id, EspecialidadeService $service): void
     {
+        if (auth()->user()->funcao === 'parceiro') {
+            abort(403, 'Ação não permitida para parceiros.');
+        }
+
         $especialidade = Especialidade::findOrFail($id);
         $service->toggleStatus($especialidade);
 
@@ -55,6 +68,10 @@ class Index extends Component
 
     public function delete(int $id, EspecialidadeService $service): void
     {
+        if (auth()->user()->funcao === 'parceiro') {
+            abort(403, 'Ação não permitida para parceiros.');
+        }
+
         $especialidade = Especialidade::findOrFail($id);
         $service->delete($especialidade);
 

@@ -13,6 +13,11 @@ class Especialidade extends Model
 
     protected $fillable = ['nome', 'ativo'];
 
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
     public function planos()
     {
         return $this->belongsToMany(Plano::class, 'plano_especialidades');

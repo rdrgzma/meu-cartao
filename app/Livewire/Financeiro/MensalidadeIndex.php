@@ -5,10 +5,19 @@ namespace App\Livewire\Financeiro;
 use App\Services\FinanceiroService;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app')]
 class MensalidadeIndex extends Component
 {
     use WithPagination;
+    
+    public function mount(): void
+    {
+        if (auth()->user()->funcao === 'parceiro' && !auth()->user()->can_access_financeiro) {
+            abort(403, 'Acesso restrito ao Financeiro.');
+        }
+    }
 
     public string $search = '';
 

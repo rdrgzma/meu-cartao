@@ -29,7 +29,7 @@ class ClienteService
             ->when($status, fn ($q) => $q->where('status', $status))
             ->when($dataInicio, fn ($q) => $q->whereDate('created_at', '>=', $dataInicio))
             ->when($dataFim, fn ($q) => $q->whereDate('created_at', '<=', $dataFim))
-            ->with('plano')
+            ->with(['plano', 'tenant'])
             ->orderBy('nome')
             ->paginate($perPage);
     }

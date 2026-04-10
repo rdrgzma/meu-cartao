@@ -52,6 +52,7 @@
                 <th class="px-6 py-4 font-semibold">{{ __('Parceiro') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Contato & Endereço') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Especialidades') }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __('Organização') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Status') }}</th>
                 <th class="px-6 py-4 font-semibold text-right">{{ __('Ações') }}</th>
             </x-slot>
@@ -78,6 +79,10 @@
                         <x-badge color="zinc">
                             {{ $parceiro->especialidades_count }} atend.
                         </x-badge>
+                    </td>
+
+                    <td class="px-6 py-4 text-zinc-600 dark:text-zinc-400 text-sm">
+                        {{ $parceiro->tenant?->nome ?? __('Sem Organização') }}
                     </td>
 
                     <td class="px-6 py-4">

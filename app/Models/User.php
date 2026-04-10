@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Traits\Tenantable;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -12,12 +12,12 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
-#[Fillable(['name', 'email', 'password', 'tenant_id', 'parceiro_id', 'cliente_id', 'status', 'tipo', 'funcao', 'telefone', 'documento'])]
+#[Fillable(['name', 'email', 'password', 'tenant_id', 'parceiro_id', 'cliente_id', 'status', 'tipo', 'funcao', 'telefone', 'documento', 'can_access_dashboard', 'can_access_financeiro', 'can_access_relatorios', 'can_access_planos', 'can_access_especialidades'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, Tenantable;
 
     /**
      * Get the attributes that should be cast.

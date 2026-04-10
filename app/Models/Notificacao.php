@@ -22,4 +22,9 @@ class Notificacao extends Model
     protected $casts = [
         'ativo' => 'boolean',
     ];
+
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class);
+    }
 }

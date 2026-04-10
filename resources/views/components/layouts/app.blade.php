@@ -45,41 +45,56 @@
 
         {{-- Navigation --}}
         <nav class="flex-1 overflow-y-auto px-3 py-6 space-y-6">
-            <div>
-                <p class="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-                    {{ __('Plataforma') }}
-                </p>
-                <div class="space-y-0.5">
-                    <x-nav-item :href="route('dashboard')" :active="request()->routeIs('dashboard')" icon="home">{{ __('Dashboard') }}</x-nav-item>
-                    <x-nav-item :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" icon="users">{{ __('Clientes') }}</x-nav-item>
-                    <x-nav-item :href="route('especialidades.index')" :active="request()->routeIs('especialidades.*')" icon="academic-cap">{{ __('Especialidades') }}</x-nav-item>
-                    <x-nav-item :href="route('planos.index')" :active="request()->routeIs('planos.*')" icon="list-bullet">{{ __('Planos') }}</x-nav-item>
-                    <x-nav-item :href="route('financeiro.index')" :active="request()->routeIs('financeiro.*')" icon="banknotes">{{ __('Financeiro') }}</x-nav-item>
-                    <x-nav-item :href="route('parceiros.index')" :active="request()->routeIs('parceiros.*')" icon="building-library">{{ __('Parceiros') }}</x-nav-item>
-                    <x-nav-item :href="route('validacao.painel')" :active="request()->routeIs('validacao.*')" icon="shield-check">{{ __('Validação') }}</x-nav-item>
+            @if(auth()->user()->funcao !== 'parceiro')
+                <div>
+                    <p class="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                        {{ __('Plataforma') }}
+                    </p>
+                    <div class="space-y-0.5">
+                        <x-nav-item :href="route('dashboard')" :active="request()->routeIs('dashboard')" icon="home">{{ __('Dashboard') }}</x-nav-item>
+                        <x-nav-item :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" icon="users">{{ __('Clientes') }}</x-nav-item>
+                        <x-nav-item :href="route('especialidades.index')" :active="request()->routeIs('especialidades.*')" icon="academic-cap">{{ __('Especialidades') }}</x-nav-item>
+                        <x-nav-item :href="route('planos.index')" :active="request()->routeIs('planos.*')" icon="list-bullet">{{ __('Planos') }}</x-nav-item>
+                        <x-nav-item :href="route('financeiro.index')" :active="request()->routeIs('financeiro.*')" icon="banknotes">{{ __('Financeiro') }}</x-nav-item>
+                        <x-nav-item :href="route('parceiros.index')" :active="request()->routeIs('parceiros.*')" icon="building-library">{{ __('Parceiros') }}</x-nav-item>
+                        <x-nav-item :href="route('validacao.painel')" :active="request()->routeIs('validacao.*')" icon="shield-check">{{ __('Validação') }}</x-nav-item>
+                    </div>
                 </div>
-            </div>
 
-            <div>
-                <p class="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-                    {{ __('Comunicação') }}
-                </p>
-                <div class="space-y-0.5">
-                    <x-nav-item :href="route('notificacoes.config')" :active="request()->routeIs('notificacoes.config')" icon="chat-bubble-left-right">{{ __('WhatsApp') }}</x-nav-item>
-                    <x-nav-item :href="route('notificacoes.logs')" :active="request()->routeIs('notificacoes.logs')" icon="document-text">{{ __('Logs') }}</x-nav-item>
+                <div>
+                    <p class="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                        {{ __('Comunicação') }}
+                    </p>
+                    <div class="space-y-0.5">
+                        <x-nav-item :href="route('notificacoes.config')" :active="request()->routeIs('notificacoes.config')" icon="chat-bubble-left-right">{{ __('WhatsApp') }}</x-nav-item>
+                        <x-nav-item :href="route('notificacoes.logs')" :active="request()->routeIs('notificacoes.logs')" icon="document-text">{{ __('Logs') }}</x-nav-item>
+                    </div>
                 </div>
-            </div>
 
-            <div>
-                <p class="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-                    {{ __('Administração') }}
-                </p>
-                <div class="space-y-0.5">
-                    <x-nav-item :href="route('sistema.usuarios')" :active="request()->routeIs('sistema.usuarios')" icon="user-group">{{ __('Usuários') }}</x-nav-item>
-                    <x-nav-item :href="route('sistema.unidades')" :active="request()->routeIs('sistema.unidades')" icon="building-library">{{ __('Unidades') }}</x-nav-item>
-                    <x-nav-item :href="route('relatorios.financeiro')" :active="request()->routeIs('relatorios.*')" icon="document-text">{{ __('Relatórios') }}</x-nav-item>
+                <div>
+                    <p class="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                        {{ __('Administração') }}
+                    </p>
+                    <div class="space-y-0.5">
+                        <x-nav-item :href="route('sistema.usuarios')" :active="request()->routeIs('sistema.usuarios')" icon="user-group">{{ __('Usuários') }}</x-nav-item>
+                        @if(auth()->user()->funcao === 'sistema')
+                            <x-nav-item :href="route('sistema.unidades')" :active="request()->routeIs('sistema.unidades')" icon="building-library">{{ __('Unidades') }}</x-nav-item>
+                        @endif
+                        <x-nav-item :href="route('relatorios.financeiro')" :active="request()->routeIs('relatorios.*')" icon="document-text">{{ __('Relatórios') }}</x-nav-item>
+                    </div>
                 </div>
-            </div>
+            @else
+                {{-- Navegação Parceiro --}}
+                <div>
+                    <p class="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                        {{ __('Portal do Parceiro') }}
+                    </p>
+                    <div class="space-y-0.5">
+                        <x-nav-item :href="route('parceiro.painel')" :active="request()->routeIs('parceiro.painel')" icon="home">{{ __('Meu Painel') }}</x-nav-item>
+                        <x-nav-item :href="route('validacao.painel')" :active="request()->routeIs('validacao.*')" icon="shield-check">{{ __('Validar Cliente') }}</x-nav-item>
+                    </div>
+                </div>
+            @endif
         </nav>
 
         {{-- User Footer --}}
@@ -127,6 +142,12 @@
             {{-- Page title (from wire:title or page heading) --}}
             @if(isset($title))
                 <h2 class="hidden sm:block text-sm font-semibold text-zinc-500 dark:text-zinc-400">{{ $title }}</h2>
+            @endif
+
+            @if(auth()->user()->funcao === 'sistema')
+                <div class="ml-4">
+                    <livewire:sistema.tenant-selector />
+                </div>
             @endif
 
             {{-- Spacer --}}

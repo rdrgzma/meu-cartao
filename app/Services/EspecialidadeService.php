@@ -18,6 +18,7 @@ class EspecialidadeService
             ->when($status, fn ($q) => $q->where('ativo', $status === '1'))
             ->when($dataInicio, fn ($q) => $q->whereDate('created_at', '>=', $dataInicio))
             ->when($dataFim, fn ($q) => $q->whereDate('created_at', '<=', $dataFim))
+            ->with('tenant')
             ->orderBy('nome')
             ->paginate($perPage);
     }

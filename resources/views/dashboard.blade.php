@@ -1,3 +1,6 @@
+@if(auth()->user()->funcao === 'parceiro' && !auth()->user()->can_access_dashboard)
+    @php abort(403, 'Acesso restrito ao Dashboard.'); @endphp
+@endif
 <x-layouts.app :title="__('Dashboard')">
     <div class="space-y-8">
 

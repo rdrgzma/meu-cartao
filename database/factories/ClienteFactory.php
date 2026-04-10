@@ -2,7 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Cliente;
+use App\Models\Plano;
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ClienteFactory extends Factory
@@ -16,7 +17,7 @@ class ClienteFactory extends Factory
             'telefone' => $this->faker->phoneNumber,
             'email' => $this->faker->safeEmail,
             'data_adesao' => now()->subDays(rand(0, 120)),
-            'status' => $this->faker->randomElement(['ativo','inadimplente']),
+            'status' => $this->faker->randomElement(['ativo', 'inadimplente']),
             'plano_id' => Plano::factory(),
         ];
     }

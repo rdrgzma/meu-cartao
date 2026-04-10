@@ -6,7 +6,9 @@ use App\Models\Cliente;
 use App\Models\Especialidade;
 use App\Services\ValidadorElegibilidadeService;
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app')]
 class Painel extends Component
 {
     public string $search = '';

@@ -38,6 +38,7 @@
         <x-table :paginate="$especialidades">
             <x-slot name="columns">
                 <th class="px-6 py-4 font-semibold">{{ __('Nome') }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __('Organização') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Status') }}</th>
                 <th class="px-6 py-4 font-semibold text-right">{{ __('Ações') }}</th>
             </x-slot>
@@ -45,23 +46,36 @@
             @foreach ($especialidades as $especialidade)
                 <tr wire:key="especialidade-{{ $especialidade->id }}" class="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors text-sm">
                     <td class="px-6 py-4 font-semibold text-zinc-900 dark:text-white">{{ $especialidade->nome }}</td>
+                    <td class="px-6 py-4 text-zinc-600 dark:text-zinc-400">
+                        {{ $especialidade->tenant?->nome ?? __('Sem Organização') }}
+                    </td>
                     <td class="px-6 py-4">
-                        <button wire:click="toggleStatus({{ $especialidade->id }})" class="focus:outline-none">
+                        @if(auth()->user()->funcao !== 'parceiro')
+                            <button wire:click="toggleStatus({{ $especialidade->id }})" class="focus:outline-none">
+                                <x-badge :color="$especialidade->ativo ? 'green' : 'red'">
+                                    {{ $especialidade->ativo ? 'Ativo' : 'Inativo' }}
+                                </x-badge>
+                            </button>
+                        @else
                             <x-badge :color="$especialidade->ativo ? 'green' : 'red'">
                                 {{ $especialidade->ativo ? 'Ativo' : 'Inativo' }}
                             </x-badge>
-                        </button>
+                        @endif
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <div class="flex justify-end gap-1">
-                            <x-button variant="ghost" size="sm" wire:click="edit({{ $especialidade->id }})">
-                                {{ __('Editar') }}
-                            </x-button>
-                            <x-button variant="ghost" size="sm" class="text-red-500 hover:text-red-700"
-                                wire:click="delete({{ $especialidade->id }})" wire:confirm="{{ __('Tem certeza?') }}">
-                                {{ __('Excluir') }}
-                            </x-button>
-                        </div>
+                        @if(auth()->user()->funcao !== 'parceiro')
+                            <div class="flex justify-end gap-1">
+                                <x-button variant="ghost" size="sm" wire:click="edit({{ $especialidade->id }})">
+                                    {{ __('Editar') }}
+                                </x-button>
+                                <x-button variant="ghost" size="sm" class="text-red-500 hover:text-red-700"
+                                    wire:click="delete({{ $especialidade->id }})" wire:confirm="{{ __('Tem certeza?') }}">
+                                    {{ __('Excluir') }}
+                                </x-button>
+                            </div>
+                        @else
+                            <span class="text-zinc-400 italic text-xs">{{ __('Apenas visualização') }}</span>
+                        @endif
                     </td>
                 </tr>
             @endforeach

@@ -5,10 +5,19 @@ namespace App\Livewire\Sistema;
 use App\Models\Tenant;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app')]
 class TenantIndex extends Component
 {
     use WithPagination;
+    
+    public function mount(): void
+    {
+        if (auth()->user()->funcao !== 'sistema') {
+            abort(403, 'Acesso restrito ao Administrador do Sistema.');
+        }
+    }
 
     public string $search = '';
 

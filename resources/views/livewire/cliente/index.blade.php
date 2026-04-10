@@ -5,11 +5,13 @@
             <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ __('Gerencie os assinantes e dependentes do Cartão Mais Saúde.') }}</p>
         </div>
 
-        <div>
-            <x-button variant="primary" icon="users" wire:click="create">
-                {{ __('Novo Cliente') }}
-            </x-button>
-        </div>
+        @if(auth()->user()->funcao !== 'parceiro')
+            <div>
+                <x-button variant="primary" icon="users" wire:click="create">
+                    {{ __('Novo Cliente') }}
+                </x-button>
+            </div>
+        @endif
     </div>
 
     <div class="card-premium overflow-hidden">
@@ -53,6 +55,7 @@
                 <th class="px-6 py-4 font-semibold">{{ __('Cliente') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Documentos') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Plano Atual') }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __('Organização') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Status') }}</th>
                 <th class="px-6 py-4 font-semibold text-right">{{ __('Ações') }}</th>
             </x-slot>
@@ -85,6 +88,10 @@
                         @endif
                     </td>
 
+                    <td class="px-6 py-4 text-zinc-600 dark:text-zinc-400">
+                        {{ $cliente->tenant?->nome ?? __('Sem Organização') }}
+                    </td>
+
                     <td class="px-6 py-4">
                         <x-badge :color="$cliente->status === 'ativo' ? 'green' : ($cliente->status === 'inadimplente' ? 'red' : 'zinc')">
                             {{ ucfirst($cliente->status) }}
@@ -96,12 +103,14 @@
                             <x-button variant="ghost" size="sm" wire:click="abrirCarteira({{ $cliente->id }})">
                                 {{ __('Carteira') }}
                             </x-button>
-                            <x-button variant="ghost" size="sm" wire:click="edit({{ $cliente->id }})">
-                                {{ __('Editar') }}
-                            </x-button>
-                            <x-button variant="ghost" size="sm" class="text-red-500 hover:text-red-700 hover:bg-red-50" wire:click="delete({{ $cliente->id }})" wire:confirm="{{ __('Excluir?') }}">
-                                {{ __('Excluir') }}
-                            </x-button>
+                            @if(auth()->user()->funcao !== 'parceiro')
+                                <x-button variant="ghost" size="sm" wire:click="edit({{ $cliente->id }})">
+                                    {{ __('Editar') }}
+                                </x-button>
+                                <x-button variant="ghost" size="sm" class="text-red-500 hover:text-red-700 hover:bg-red-50" wire:click="delete({{ $cliente->id }})" wire:confirm="{{ __('Excluir?') }}">
+                                    {{ __('Excluir') }}
+                                </x-button>
+                            @endif
                         </div>
                     </td>
                 </tr>

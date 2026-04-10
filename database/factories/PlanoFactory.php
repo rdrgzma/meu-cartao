@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Plano;
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PlanoFactory extends Factory
@@ -11,7 +11,7 @@ class PlanoFactory extends Factory
     {
         return [
             'tenant_id' => Tenant::factory(),
-            'nome' => 'Plano ' . $this->faker->randomElement(['Básico','Plus','Premium']),
+            'nome' => 'Plano '.$this->faker->randomElement(['Básico', 'Plus', 'Premium']),
             'valor' => $this->faker->randomFloat(2, 29, 199),
             'descricao' => $this->faker->sentence,
             'ativo' => true,

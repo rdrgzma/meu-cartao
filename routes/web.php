@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Validação
     Route::get('validacao', Painel::class)->name('validacao.painel');
+    Route::get('meu-painel', \App\Livewire\Parceiro\MeuPainel::class)->name('parceiro.painel');
 
     // Carteira Virtual (Cliente)
     Route::get('carteira/{id?}', Carteira::class)->name('cliente.carteira');

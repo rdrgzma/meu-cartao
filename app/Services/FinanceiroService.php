@@ -15,7 +15,7 @@ class FinanceiroService
     public function paginate(int $perPage = 10, ?string $search = null, ?string $status = null, ?string $dataInicio = null, ?string $dataFim = null): LengthAwarePaginator
     {
         return Mensalidade::query()
-            ->with(['cliente', 'cliente.plano'])
+            ->with(['cliente', 'cliente.plano', 'cliente.tenant'])
             ->when($search, function ($q) use ($search) {
                 $q->whereHas('cliente', fn ($q) => $q->where('nome', 'like', "%{$search}%"));
             })

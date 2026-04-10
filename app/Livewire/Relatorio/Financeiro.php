@@ -5,7 +5,9 @@ namespace App\Livewire\Relatorio;
 use App\Models\Mensalidade;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Layout;
 
+#[Layout('components.layouts.app')]
 class Financeiro extends Component
 {
     use WithPagination;
@@ -18,6 +20,10 @@ class Financeiro extends Component
 
     public function mount(): void
     {
+        if (auth()->user()->funcao === 'parceiro' && !auth()->user()->can_access_relatorios) {
+            abort(403, 'Acesso restrito ao Relatório Financeiro.');
+        }
+
         $this->dataInicio = now()->startOfMonth()->format('Y-m-d');
         $this->dataFim = now()->endOfMonth()->format('Y-m-d');
     }

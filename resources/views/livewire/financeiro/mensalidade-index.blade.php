@@ -53,6 +53,7 @@
                 <th class="px-6 py-4 font-semibold">{{ __('Cliente') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Vencimento') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Valor') }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __('Organização') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Status') }}</th>
                 <th class="px-6 py-4 font-semibold text-right">{{ __('Ações') }}</th>
             </x-slot>
@@ -72,6 +73,10 @@
 
                     <td class="px-6 py-4 font-mono font-medium">
                         R$ {{ number_format($mensalidade->valor, 2, ',', '.') }}
+                    </td>
+
+                    <td class="px-6 py-4 text-zinc-600 dark:text-zinc-400">
+                        {{ $mensalidade->cliente->tenant?->nome ?? __('Sem Organização') }}
                     </td>
 
                     <td class="px-6 py-4">

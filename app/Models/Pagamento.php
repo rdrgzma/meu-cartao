@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Tenantable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Pagamento extends Model
 {
-    use HasFactory;
+    use HasFactory, Tenantable;
     protected $fillable = [
-        'mensalidade_id','valor','data_pagamento','metodo'
+        'tenant_id', 'mensalidade_id','valor','data_pagamento','metodo'
     ];
 
     public function mensalidade()

@@ -12,7 +12,7 @@ class ValidadorElegibilidadeService
     {
         // 1. Status do cliente
         if ($cliente->status !== 'ativo') {
-            return $this->response('inadimplente');
+            return $this->response('inadimplente', [], $cliente, $especialidadeId);
         }
 
         $plano = $cliente->plano;
@@ -23,7 +23,7 @@ class ValidadorElegibilidadeService
             ->first();
 
         if (!$cobertura) {
-            return $this->response('nao_coberto');
+            return $this->response('nao_coberto', [], $cliente, $especialidadeId);
         }
 
         // 3. Verifica carência
@@ -38,17 +38,37 @@ class ValidadorElegibilidadeService
             if (now()->lt($dataLiberacao)) {
                 return $this->response('em_carencia', [
                     'liberado_em' => $dataLiberacao->toDateString()
-                ]);
+                ], $cliente, $especialidadeId);
             }
         }
 
-        return $this->response('liberado', [
+        $response = $this->response('liberado', [
             'tipo_cobertura' => $cobertura->pivot->tipo_cobertura
+        ]);
+
+        $this->recordAtendimento($cliente, $especialidadeId, 'liberado');
+
+        return $response;
+    }
+
+    private function recordAtendimento(Cliente $cliente, int $especialidadeId, string $status): void
+    {
+        \App\Models\Atendimento::create([
+            'cliente_id' => $cliente->id,
+            'especialidade_id' => $especialidadeId,
+            'parceiro_id' => auth()->user()->parceiro_id,
+            'user_id' => auth()->id(),
+            'status' => $status,
+            'data_atendimento' => now(),
         ]);
     }
 
-    private function response(string $status, array $extra = []): array
+    private function response(string $status, array $extra = [], Cliente $cliente = null, int $especId = null): array
     {
+        if ($cliente && $especId) {
+            $this->recordAtendimento($cliente, $especId, $status);
+        }
+
         return array_merge([
             'status' => $status
         ], $extra);

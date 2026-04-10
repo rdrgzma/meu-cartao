@@ -52,6 +52,7 @@
                 <th class="px-6 py-4 font-semibold">{{ __('Nome do Plano') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Valor Mensal') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Cobertura') }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __('Organização') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Status') }}</th>
                 <th class="px-6 py-4 font-semibold text-right">{{ __('Ações') }}</th>
             </x-slot>
@@ -70,6 +71,10 @@
                         <x-badge color="zinc">
                             {{ $plano->especialidades_count }} cobertas
                         </x-badge>
+                    </td>
+
+                    <td class="px-6 py-4 text-zinc-600 dark:text-zinc-400">
+                        {{ $plano->tenant?->nome ?? __('Sem Organização') }}
                     </td>
 
                     <td class="px-6 py-4">
