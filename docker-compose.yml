@@ -1,0 +1,102 @@
+version: "3.8"
+
+services:
+  db:
+    image: mariadb:10.11
+    volumes:
+      - meucartao_db_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=meucartao
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+    networks:
+      - app_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1024M
+      restart_policy:
+        condition: on-failure
+
+  redis:
+    image: redis:alpine
+    networks:
+      - app_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+  app:
+    # Substitua pela sua imagem após buildar, ex: meudockerhub/meu-cartao:latest
+    image: meucartao-app:latest
+    depends_on:
+      - db
+      - redis
+    environment:
+      - APP_NAME="Meu Cartao"
+      - APP_ENV=production
+      # IMPORTANTE: Gere uma chave usando 'php artisan key:generate' e coloque aqui
+      - APP_KEY=base64:base64:pYqlZtIKwzAZ0u8LG9ZPXlUKRAi6Zu0Yab1/XIquDKs=
+      - APP_DEBUG=false
+      - APP_URL=https://meucartao.seudominio.com.br
+
+      # Banco de dados
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=meucartao
+      - DB_USERNAME=meucartao
+      - DB_PASSWORD=senha_db_segura_2024
+
+      # Redis (Cache, Sessão e Filas)
+      - CACHE_STORE=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+      - REDIS_CLIENT=phpredis
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=null
+      - REDIS_PORT=6379
+
+    networks:
+      - traefik_public
+      - app_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "2"
+          memory: 1024M
+      labels:
+        - traefik.enable=true
+        # SSL via Traefik
+        - traefik.http.routers.meucartao.rule=Host(`meucartao.seudominio.com.br`)
+        - traefik.http.routers.meucartao.tls.certresolver=le
+        - traefik.http.routers.meucartao.entrypoints=websecure
+        - traefik.http.routers.meucartao.tls=true
+        - traefik.http.routers.meucartao.service=meucartao
+        - traefik.http.services.meucartao.loadbalancer.server.port=80
+
+volumes:
+  meucartao_db_data:
+    external: true
+
+networks:
+  traefik_public:
+    external: true
+  app_network:
+    external: true

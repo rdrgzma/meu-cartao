@@ -1,4 +1,5 @@
-<?phpnamespace App\Services;
+<?php
+namespace App\Services;
 
 use App\Models\Cliente;
 use App\Models\Carencia;
