@@ -10,8 +10,8 @@ class TenantSeeder extends Seeder
     public function run(): void
     {
         Tenant::create([
-            'nome' => 'Cartão Mais Saúde',
-            'slug' => 'cartao-mais-saude'
+            'nome' => 'Meu Cartão (Fábrica da Net)',
+            'slug' => 'meucartao',
         ]);
     }
 }

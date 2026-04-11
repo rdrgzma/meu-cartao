@@ -40,14 +40,14 @@ class Financeiro extends Component
         );
     }
 
-    public function render()
+public function render()
     {
         $vendas = Mensalidade::query()
             ->with('cliente')
-            ->when($this->dataInicio, fn ($q) => $q->where('data_pagamento', '>=', $this->dataInicio))
-            ->when($this->dataFim, fn ($q) => $q->where('data_pagamento', '<=', $this->dataFim))
+            ->when($this->dataInicio, fn ($q) => $q->where('vencimento', '>=', $this->dataInicio))
+            ->when($this->dataFim, fn ($q) => $q->where('vencimento', '<=', $this->dataFim))
             ->when($this->status, fn ($q) => $q->where('status', $this->status))
-            ->orderBy('data_pagamento', 'desc')
+            ->orderBy('vencimento', 'desc')
             ->paginate(15);
 
         return view('livewire.relatorio.financeiro', [
