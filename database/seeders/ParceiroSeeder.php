@@ -25,6 +25,8 @@ class ParceiroSeeder extends Seeder
             $parceiro = Parceiro::create([
                 'tenant_id' => $tenant->id,
                 'nome_fantasia' => "Clínica Saúde $i",
+                'telefone'=> random_int(1000000000, 9999999999),
+                'documento'=>random_int(10000000000, 99999999999),
                 'cidade' => 'Tramandaí',
                 'estado' => 'RS',
                 'status' => 'ativo',
