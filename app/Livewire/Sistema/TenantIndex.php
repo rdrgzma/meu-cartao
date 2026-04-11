@@ -6,11 +6,30 @@ use App\Models\Tenant;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 
 #[Layout('components.layouts.app')]
 class TenantIndex extends Component
 {
     use WithPagination;
+
+    #[On('tenantUpdated')]
+    public function refresh(): void
+    {
+        // Forçar renderização
+    }
+
+    public function create(): void
+    {
+        $this->dispatch('reset-tenant-form');
+        $this->dispatch('open-modal', 'tenant-modal');
+    }
+
+    public function edit(int $id): void
+    {
+        $this->dispatch('edit-tenant', id: $id);
+        $this->dispatch('open-modal', 'tenant-modal');
+    }
     
     public function mount(): void
     {

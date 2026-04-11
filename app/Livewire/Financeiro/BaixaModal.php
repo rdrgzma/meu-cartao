@@ -5,6 +5,7 @@ namespace App\Livewire\Financeiro;
 use App\Models\Mensalidade;
 use App\Services\FinanceiroService;
 use Carbon\Carbon;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class BaixaModal extends Component
@@ -15,13 +16,12 @@ class BaixaModal extends Component
 
     public string $data_pagamento = '';
 
-    protected $listeners = ['setMensalidade'];
-
     public function mount(): void
     {
         $this->data_pagamento = now()->format('Y-m-d');
     }
 
+    #[On('setMensalidade')]
     public function setMensalidade(int $id): void
     {
         $this->mensalidade = Mensalidade::findOrFail($id);
@@ -31,6 +31,10 @@ class BaixaModal extends Component
 
     public function save(FinanceiroService $service): void
     {
+        if (! $this->mensalidade) {
+            return;
+        }
+
         $this->validate([
             'valor_pago' => ['required', 'numeric', 'min:0'],
             'data_pagamento' => ['required', 'date'],

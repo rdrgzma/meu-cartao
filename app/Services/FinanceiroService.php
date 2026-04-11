@@ -41,12 +41,23 @@ class FinanceiroService
      */
     public function gerarMensalidade(Cliente $cliente, ?Carbon $vencimento = null): Mensalidade
     {
-        return Mensalidade::create([
+
+        $mensalidade = Mensalidade::create([
             'cliente_id' => $cliente->id,
             'valor' => $cliente->plano->valor,
             'vencimento' => $vencimento ?? now()->addMonth(),
             'status' => 'pendente',
         ]);
+        if ($mensalidade) {
+            LogService::registrar(
+                'Financeiro',
+                'Geração de Mensalidade',
+                "Mensalidade gerada para {$cliente->nome} no valor de R$ ".number_format($cliente->plano->valor, 2, ',', '.'),
+                ['cliente_id' => $cliente->id, 'valor' => $cliente->plano->valor]
+            );
+        }
+
+        return $mensalidade;
     }
 
     /**
@@ -64,6 +75,13 @@ class FinanceiroService
         ]);
 
         $this->atualizarStatusCliente($mensalidade->cliente);
+
+        LogService::registrar(
+            'Financeiro',
+            'Baixa de Mensalidade',
+            "Recebimento registrado para {$mensalidade->cliente->nome} no valor de R$ ".number_format($valor, 2, ',', '.'),
+            ['mensalidade_id' => $mensalidade->id, 'valor' => $valor]
+        );
     }
 
     /**
@@ -78,6 +96,12 @@ class FinanceiroService
         $cliente->update([
             'status' => $hasAtraso ? 'inadimplente' : 'ativo',
         ]);
+        LogService::registrar(
+            'Financeiro',
+            'Atualização de Status do Cliente',
+            "Status do cliente {$cliente->nome} atualizado para {$cliente->status}",
+            ['cliente_id' => $cliente->id, 'status' => $cliente->status]
+        );
     }
 
     /**

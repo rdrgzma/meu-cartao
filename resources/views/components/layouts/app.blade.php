@@ -67,7 +67,6 @@
                     </p>
                     <div class="space-y-0.5">
                         <x-nav-item :href="route('notificacoes.config')" :active="request()->routeIs('notificacoes.config')" icon="chat-bubble-left-right">{{ __('WhatsApp') }}</x-nav-item>
-                        <x-nav-item :href="route('notificacoes.logs')" :active="request()->routeIs('notificacoes.logs')" icon="document-text">{{ __('Logs') }}</x-nav-item>
                     </div>
                 </div>
 
@@ -80,7 +79,8 @@
                         @if(auth()->user()->funcao === 'sistema')
                             <x-nav-item :href="route('sistema.unidades')" :active="request()->routeIs('sistema.unidades')" icon="building-library">{{ __('Unidades') }}</x-nav-item>
                         @endif
-                        <x-nav-item :href="route('relatorios.financeiro')" :active="request()->routeIs('relatorios.*')" icon="document-text">{{ __('Relatórios') }}</x-nav-item>
+                        <x-nav-item :href="route('relatorios.financeiro')" :active="request()->routeIs('relatorios.financeiro')" icon="document-text">{{ __('Relatórios') }}</x-nav-item>
+                        <x-nav-item :href="route('sistema.logs')" :active="request()->routeIs('sistema.logs')" icon="list-bullet">{{ __('Logs de Auditoria') }}</x-nav-item>
                     </div>
                 </div>
             @else

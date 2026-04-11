@@ -10,7 +10,7 @@ class Tenant extends Model
 {
     /** @use HasFactory<\Database\Factories\TenantFactory> */
     use HasFactory, SoftDeletes;
-        protected $fillable = ['nome','slug','documento','telefone','endereco','cidade','estado'];
+        protected $fillable = ['nome','slug','documento','telefone','endereco','cidade','estado', 'status'];
 
     public function clientes()
     {

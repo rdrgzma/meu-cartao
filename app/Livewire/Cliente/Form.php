@@ -5,8 +5,8 @@ namespace App\Livewire\Cliente;
 use App\Models\Cliente;
 use App\Services\ClienteService;
 use App\Services\PlanoService;
-use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
 class Form extends Component
 {
@@ -15,6 +15,7 @@ class Form extends Component
     {
         $this->resetForm();
     }
+
     public ?Cliente $cliente = null;
 
     public ?string $nome = '';
@@ -44,11 +45,11 @@ class Form extends Component
         $this->cliente = Cliente::findOrFail($id);
         $this->nome = $this->cliente->nome ?? '';
         $this->cpf = $this->cliente->cpf ?? '';
-        $this->cns = $this->cliente->cns;
+        $this->cns = $this->cliente->cns ?? '';
         $this->email = $this->cliente->email ?? '';
         $this->telefone = $this->cliente->telefone ?? '';
-        $this->data_adesao = $this->cliente->data_adesao instanceof \DateTime 
-            ? $this->cliente->data_adesao->format('Y-m-d') 
+        $this->data_adesao = $this->cliente->data_adesao instanceof \DateTime
+            ? $this->cliente->data_adesao->format('Y-m-d')
             : ($this->cliente->data_adesao ?? '');
         $this->status = $this->cliente->status ?? 'ativo';
         $this->plano_id = $this->cliente->plano_id;
@@ -69,7 +70,7 @@ class Form extends Component
         $rules = [
             'nome' => ['required', 'string', 'max:255'],
             'cpf' => ['required', 'string', 'unique:clientes,cpf,'.($this->cliente?->id ?? 'NULL')],
-            'cns' => ['nullable', 'string'],
+            'cns' => ['nullable', 'string', 'unique:clientes,cns,'.($this->cliente?->id ?? '')],
             'email' => ['required', 'email', 'unique:clientes,email,'.($this->cliente?->id ?? 'NULL')],
             'telefone' => ['required', 'string'],
             'data_adesao' => ['required', 'date'],
@@ -89,7 +90,7 @@ class Form extends Component
             }
 
             $this->dispatch('clienteUpdated');
-            
+
             if (! $stay) {
                 $this->dispatch('close-modal');
             }

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Cliente;
+use App\Models\Plano;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
@@ -51,6 +52,15 @@ class ClienteService
                 'inicio' => now(),
             ]);
 
+            $this->gerarMensalidadePendente($cliente, (int) $data['plano_id']);
+
+            LogService::registrar(
+                'Clientes',
+                'Novo Cliente',
+                "Cliente {$cliente->nome} cadastrado com o plano {$cliente->plano->nome}.",
+                ['cliente_id' => $cliente->id]
+            );
+
             return $cliente;
         });
     }
@@ -70,7 +80,18 @@ class ClienteService
                 unset($data['plano_id']);
             }
 
-            return $cliente->update($data);
+            $sucesso = $cliente->update($data);
+
+            if ($sucesso) {
+                LogService::registrar(
+                    'Clientes',
+                    'Atualização de Cadastro',
+                    "Dados do cliente {$cliente->nome} foram atualizados.",
+                    ['cliente_id' => $cliente->id]
+                );
+            }
+
+            return $sucesso;
         });
     }
 
@@ -95,7 +116,33 @@ class ClienteService
                 'plano_id' => $novoPlanoId,
                 // data_adesao = now() // Decisão: reinicia carência no PRD diz que varia por especialidade e base é adesão
             ]);
+
+            $this->gerarMensalidadePendente($cliente, $novoPlanoId);
+
+            LogService::registrar(
+                'Clientes',
+                'Troca de Plano',
+                "Plano do cliente {$cliente->nome} alterado para {$cliente->plano->nome}.",
+                ['cliente_id' => $cliente->id, 'novo_plano_id' => $novoPlanoId]
+            );
         });
+    }
+
+    /**
+     * Generate a pending monthly payment for the client.
+     */
+    private function gerarMensalidadePendente(Cliente $cliente, int $planoId): void
+    {
+        $plano = Plano::find($planoId);
+
+        if ($plano) {
+            $cliente->mensalidades()->create([
+                'tenant_id' => $cliente->tenant_id,
+                'valor' => $plano->valor,
+                'vencimento' => now(),
+                'status' => 'pendente',
+            ]);
+        }
     }
 
     /**
@@ -103,6 +150,19 @@ class ClienteService
      */
     public function delete(Cliente $cliente): bool
     {
-        return $cliente->delete();
+        $nome = $cliente->nome;
+        $id = $cliente->id;
+        $sucesso = $cliente->delete();
+
+        if ($sucesso) {
+            LogService::registrar(
+                'Clientes',
+                'Exclusão de Cliente',
+                "Cliente {$nome} (ID: {$id}) foi removido do sistema.",
+                ['cliente_id' => $id]
+            );
+        }
+
+        return $sucesso;
     }
 }

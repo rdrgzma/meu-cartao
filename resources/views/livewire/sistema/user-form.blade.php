@@ -1,22 +1,48 @@
 <x-modal name="user-modal" :title="$user ? __('Gerenciar Usuário') : __('Novo Usuário')">
     <form wire:submit="save" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <x-field label="Nome" readonly>
-                <input type="text" wire:model="name" class="input bg-zinc-50 dark:bg-zinc-800/50" readonly>
+            <x-field label="Nome">
+                <input type="text" wire:model="name" class="input {{ $user ? 'bg-zinc-50 dark:bg-zinc-800/50' : '' }}" {{ $user ? 'readonly' : '' }}>
             </x-field>
-            <x-field label="E-mail" readonly>
-                <input type="email" wire:model="email" class="input bg-zinc-50 dark:bg-zinc-800/50" readonly>
+            <x-field label="E-mail">
+                <input type="email" wire:model="email" class="input {{ $user ? 'bg-zinc-50 dark:bg-zinc-800/50' : '' }}" {{ $user ? 'readonly' : '' }}>
             </x-field>
         </div>
 
-        <x-field label="Nível de Acesso">
-            <select wire:model.live="funcao" class="select">
-                <option value="sistema">{{ __('Sistema (Global)') }}</option>
-                <option value="admin">{{ __('Administrador (Unidade)') }}</option>
-                <option value="parceiro">{{ __('Parceiro (Prestador)') }}</option>
-                <option value="usuario">{{ __('Cliente/Usuário') }}</option>
-            </select>
-        </x-field>
+        @if(!$user)
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <x-field label="Senha">
+                    <input type="password" wire:model="password" class="input">
+                </x-field>
+                <x-field label="Confirmação de Senha">
+                    <input type="password" wire:model="password_confirmation" class="input">
+                </x-field>
+            </div>
+        @endif
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <x-field label="Nível de Acesso">
+                <select wire:model.live="funcao" class="select">
+                    @if(auth()->user()->funcao === 'sistema')
+                        <option value="sistema">{{ __('Sistema (Global)') }}</option>
+                    @endif
+                    <option value="admin">{{ __('Administrador (Unidade)') }}</option>
+                    <option value="parceiro">{{ __('Parceiro (Prestador)') }}</option>
+                    <option value="cliente">{{ __('Cliente/Usuário') }}</option>
+                </select>
+            </x-field>
+
+            @if(auth()->user()->funcao === 'sistema')
+                <x-field label="Unidade / Organização">
+                    <select wire:model="tenant_id" class="select">
+                        <option value="">{{ __('Suporte Global (Sem Unidade)') }}</option>
+                        @foreach($tenants as $tenant)
+                            <option value="{{ $tenant->id }}">{{ $tenant->nome }}</option>
+                        @endforeach
+                    </select>
+                </x-field>
+            @endif
+        </div>
 
         @if($funcao === 'parceiro')
             <div class="space-y-4">
@@ -56,7 +82,7 @@
                 {{ __('Cancelar') }}
             </x-button>
             <x-button type="submit" variant="primary">
-                {{ __('Salvar Alterações') }}
+                {{ $user ? __('Salvar Alterações') : __('Cadastrar Usuário') }}
             </x-button>
         </div>
     </form>

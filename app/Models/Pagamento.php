@@ -10,8 +10,15 @@ class Pagamento extends Model
 {
     use HasFactory, Tenantable;
     protected $fillable = [
-        'tenant_id', 'mensalidade_id','valor','data_pagamento','metodo'
+        'tenant_id', 'mensalidade_id', 'valor', 'data_pagamento', 'metodo',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'data_pagamento' => 'datetime',
+        ];
+    }
 
     public function mensalidade()
     {

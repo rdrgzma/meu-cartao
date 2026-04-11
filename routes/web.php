@@ -8,10 +8,11 @@ use App\Livewire\Especialidade\Index as EspecialidadeIndex;
 use App\Livewire\Financeiro\MensalidadeIndex;
 use App\Livewire\Financeiro\PagamentoIndex;
 use App\Livewire\Notificacao\Configuracao;
-use App\Livewire\Notificacao\LogIndex;
 use App\Livewire\Parceiro\Index;
+use App\Livewire\Parceiro\MeuPainel;
 use App\Livewire\Plano\Index as PlanoIndex;
 use App\Livewire\Relatorio\Financeiro;
+use App\Livewire\Sistema\LogIndex;
 use App\Livewire\Sistema\TenantIndex;
 use App\Livewire\Sistema\UserIndex;
 use App\Livewire\Validacao\Painel;
@@ -42,14 +43,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Validação
     Route::get('validacao', Painel::class)->name('validacao.painel');
-    Route::get('meu-painel', \App\Livewire\Parceiro\MeuPainel::class)->name('parceiro.painel');
+    Route::get('meu-painel', MeuPainel::class)->name('parceiro.painel');
 
     // Carteira Virtual (Cliente)
     Route::get('carteira/{id?}', Carteira::class)->name('cliente.carteira');
 
     // Notificações
     Route::get('notificacoes/config', Configuracao::class)->name('notificacoes.config');
-    Route::get('notificacoes/logs', LogIndex::class)->name('notificacoes.logs');
+    Route::get('sistema/logs', LogIndex::class)->name('sistema.logs');
 
     // Relatórios
     Route::get('relatorios/financeiro', Financeiro::class)->name('relatorios.financeiro');

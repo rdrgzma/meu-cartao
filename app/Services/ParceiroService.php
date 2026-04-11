@@ -31,7 +31,17 @@ class ParceiroService
      */
     public function create(array $data): Parceiro
     {
-        return Parceiro::create($data);
+        $parceiro = Parceiro::create($data);
+        if ($parceiro) {
+            LogService::registrar(
+                'Parceiros',
+                'Novo Parceiro',
+                "Parceiro {$parceiro->nome_fantasia} cadastrado.",
+                ['parceiro_id' => $parceiro->id]
+            );
+        }
+
+        return $parceiro;
     }
 
     /**
@@ -39,7 +49,17 @@ class ParceiroService
      */
     public function update(Parceiro $parceiro, array $data): bool
     {
-        return $parceiro->update($data);
+        $sucesso = $parceiro->update($data);
+        if ($sucesso) {
+            LogService::registrar(
+                'Parceiros',
+                'Atualização de Cadastro',
+                "Dados do parceiro {$parceiro->nome_fantasia} foram atualizados.",
+                ['parceiro_id' => $parceiro->id]
+            );
+        }
+
+        return $sucesso;
     }
 
     /**
@@ -47,7 +67,19 @@ class ParceiroService
      */
     public function delete(Parceiro $parceiro): bool
     {
-        return $parceiro->delete();
+        $nome = $parceiro->nome_fantasia;
+        $id = $parceiro->id;
+        $sucesso = $parceiro->delete();
+        if ($sucesso) {
+            LogService::registrar(
+                'Parceiros',
+                'Exclusão de Parceiro',
+                "Parceiro {$nome} (ID: {$id}) foi removido do sistema.",
+                ['parceiro_id' => $id]
+            );
+        }
+
+        return $sucesso;
     }
 
     /**
@@ -63,6 +95,17 @@ class ParceiroService
      */
     public function toggleStatus(Parceiro $parceiro): bool
     {
-        return $parceiro->update(['status' => $parceiro->status === 'ativo' ? 'inativo' : 'ativo']);
+        $sucesso = $parceiro->update(['status' => $parceiro->status === 'ativo' ? 'inativo' : 'ativo']);
+        if ($sucesso) {
+
+            LogService::registrar(
+                'Parceiros',
+                'Atualização de Status do Parceiro',
+                "Status do parceiro {$parceiro->nome_fantasia} atualizado para {$parceiro->status}",
+                ['parceiro_id' => $parceiro->id, 'status' => $parceiro->status]
+            );
+        }
+
+        return $sucesso;
     }
 }

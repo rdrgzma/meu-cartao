@@ -4,8 +4,8 @@ namespace App\Livewire\Especialidade;
 
 use App\Models\Especialidade;
 use App\Services\EspecialidadeService;
-use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
 class Form extends Component
 {
@@ -14,6 +14,7 @@ class Form extends Component
     {
         $this->resetForm();
     }
+
     public ?Especialidade $especialidade = null;
 
     public ?string $nome = '';
@@ -53,14 +54,14 @@ class Form extends Component
                 if (auth()->user()->funcao === 'parceiro') {
                     $data['ativo'] = false;
                 }
-                $service->criar($data);
-                $msg = auth()->user()->funcao === 'parceiro' 
+                $service->create($data);
+                $msg = auth()->user()->funcao === 'parceiro'
                     ? 'Especialidade sugerida com sucesso. Aguardando ativação pelo administrador.'
                     : 'Especialidade cadastrada com sucesso.';
             }
 
             $this->dispatch('especialidadeUpdated');
-            
+
             if (! $stay) {
                 $this->dispatch('close-modal');
             }

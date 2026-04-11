@@ -1,34 +1,34 @@
-<section class="mt-10 space-y-6">
-    <div class="relative mb-5">
-        <flux:heading>{{ __('Delete account') }}</flux:heading>
-        <flux:subheading>{{ __('Delete your account and all of its resources') }}</flux:subheading>
+<section class="space-y-6">
+    <div class="relative">
+        <h4 class="text-lg font-bold text-red-600 dark:text-red-400">{{ __('Excluir Conta') }}</h4>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ __('Exclua sua conta e todos os dados associados permanentemente.') }}</p>
     </div>
 
-    <flux:modal.trigger name="confirm-user-deletion">
-        <flux:button variant="danger" x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')">
-            {{ __('Delete account') }}
-        </flux:button>
-    </flux:modal.trigger>
+    <x-button variant="danger" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')">
+        {{ __('Excluir Minha Conta') }}
+    </x-button>
 
-    <flux:modal name="confirm-user-deletion" :show="$errors->isNotEmpty()" focusable class="max-w-lg">
+    <x-modal name="confirm-user-deletion" title="Tem certeza que deseja excluir sua conta?">
         <form method="POST" wire:submit="deleteUser" class="space-y-6">
-            <div>
-                <flux:heading size="lg">{{ __('Are you sure you want to delete your account?') }}</flux:heading>
-
-                <flux:subheading>
-                    {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
-                </flux:subheading>
+            <div class="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                <p class="text-sm text-red-800 dark:text-red-400">
+                    {{ __('Uma vez que sua conta for excluída, todos os seus recursos e dados serão permanentemente apagados. Por favor, digite sua senha para confirmar que deseja excluir permanentemente sua conta.') }}
+                </p>
             </div>
 
-            <flux:input wire:model="password" :label="__('Password')" type="password" viewable />
+            <x-field label="Senha">
+                <input type="password" wire:model="password" class="input" placeholder="Digite sua senha para confirmar">
+            </x-field>
 
-            <div class="flex justify-end space-x-2 rtl:space-x-reverse">
-                <flux:modal.close>
-                    <flux:button variant="filled">{{ __('Cancel') }}</flux:button>
-                </flux:modal.close>
+            <div class="flex justify-end gap-3 mt-8">
+                <x-button variant="zinc" @click="$dispatch('close-modal', 'confirm-user-deletion')">
+                    {{ __('Cancelar') }}
+                </x-button>
 
-                <flux:button variant="danger" type="submit">{{ __('Delete account') }}</flux:button>
+                <x-button variant="danger" type="submit">
+                    {{ __('Sim, Excluir Conta') }}
+                </x-button>
             </div>
         </form>
-    </flux:modal>
+    </x-modal>
 </section>

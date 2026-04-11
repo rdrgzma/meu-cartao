@@ -37,13 +37,13 @@
                 <div class="p-5 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-900/30">
                     <p class="text-xs text-green-600 dark:text-green-400 font-semibold">{{ __('Total Recebido') }}</p>
                     <p class="text-2xl font-bold text-green-700 dark:text-green-300 mt-1">
-                        R$ {{ number_format($vendas->where('status', 'pago')->sum('valor_pago'), 2, ',', '.') }}
+                        R$ {{ number_format($totalRecebido, 2, ',', '.') }}
                     </p>
                 </div>
                 <div class="p-5 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-900/30">
                     <p class="text-xs text-red-600 dark:text-red-400 font-semibold">{{ __('Total Pendente/Atrasado') }}</p>
                     <p class="text-2xl font-bold text-red-700 dark:text-red-300 mt-1">
-                        R$ {{ number_format($vendas->whereIn('status', ['pendente', 'atrasado'])->sum('valor'), 2, ',', '.') }}
+                        R$ {{ number_format($totalPendente, 2, ',', '.') }}
                     </p>
                 </div>
             </div>
@@ -54,6 +54,7 @@
         <x-table :paginate="$vendas">
             <x-slot name="columns">
                 <th class="px-6 py-4 font-semibold">{{ __('Data Pagamento') }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __('Unidade') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Cliente') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Referência') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Valor Pago') }}</th>
@@ -63,8 +64,9 @@
             @foreach ($vendas as $venda)
                 <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors text-sm">
                     <td class="px-6 py-4 text-zinc-500">{{ $venda->data_pagamento ? \Carbon\Carbon::parse($venda->data_pagamento)->format('d/m/Y') : '-' }}</td>
+                    <td class="px-6 py-4 text-zinc-500">{{ $venda->tenant->nome ?? '-' }}</td>
                     <td class="px-6 py-4 font-semibold text-zinc-900 dark:text-white">{{ $venda->cliente->nome ?? 'Excluído' }}</td>
-                    <td class="px-6 py-4 text-zinc-500">{{ \Carbon\Carbon::parse($venda->mes_referencia)->format('m/Y') }}</td>
+                    <td class="px-6 py-4 text-zinc-500">{{ \Carbon\Carbon::parse($venda->vencimento)->format('m/Y') }}</td>
                     <td class="px-6 py-4 font-bold font-mono">R$ {{ number_format($venda->valor_pago, 2, ',', '.') }}</td>
                     <td class="px-6 py-4">
                         @php $color = match($venda->status) { 'pago' => 'green', 'atrasado' => 'red', default => 'zinc' }; @endphp

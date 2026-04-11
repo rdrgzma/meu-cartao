@@ -3,18 +3,19 @@
 namespace App\Livewire\Financeiro;
 
 use App\Services\FinanceiroService;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Layout;
 
 #[Layout('components.layouts.app')]
 class MensalidadeIndex extends Component
 {
     use WithPagination;
-    
+
     public function mount(): void
     {
-        if (auth()->user()->funcao === 'parceiro' && !auth()->user()->can_access_financeiro) {
+        if (auth()->user()->funcao === 'parceiro' && ! auth()->user()->can_access_financeiro) {
             abort(403, 'Acesso restrito ao Financeiro.');
         }
     }
@@ -27,7 +28,17 @@ class MensalidadeIndex extends Component
 
     public string $dataFim = '';
 
-    protected $listeners = ['pagamentoRegistrado' => '$refresh'];
+    #[On('pagamentoRegistrado')]
+    public function refreshList(): void
+    {
+        // O Livewire já atualiza o estado, mas podemos forçar se necessário
+    }
+
+    public function darBaixa(int $id): void
+    {
+        $this->dispatch('setMensalidade', id: $id)->to(BaixaModal::class);
+        $this->dispatch('open-modal', 'baixa-modal');
+    }
 
     public function updatedSearch(): void
     {

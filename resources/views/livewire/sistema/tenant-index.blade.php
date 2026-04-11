@@ -5,7 +5,9 @@
             <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ __('Gestão de licenciados e unidades do Cartão Mais Saúde.') }}</p>
         </div>
         <div>
-            {{-- Ações futuras --}}
+            <x-button variant="primary" icon="plus" wire:click="create">
+                {{ __('Nova Unidade') }}
+            </x-button>
         </div>
     </div>
 
@@ -33,20 +35,33 @@
             <x-slot name="columns">
                 <th class="px-6 py-4 font-semibold">{{ __('Nome') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Documento') }}</th>
+                <th class="px-6 py-4 font-semibold">{{ __('Status') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Cidade/UF') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Telefone') }}</th>
                 <th class="px-6 py-4 font-semibold">{{ __('Criação') }}</th>
+                <th class="px-6 py-4 font-semibold text-right">{{ __('Ações') }}</th>
             </x-slot>
 
             @foreach ($tenants as $tenant)
                 <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors text-sm">
                     <td class="px-6 py-4 font-semibold text-zinc-900 dark:text-white">{{ $tenant->nome }}</td>
                     <td class="px-6 py-4 text-zinc-500 font-mono">{{ $tenant->documento }}</td>
+                    <td class="px-6 py-4">
+                        <x-badge :color="$tenant->status === 'ativo' ? 'green' : 'red'">
+                            {{ ucfirst($tenant->status) }}
+                        </x-badge>
+                    </td>
                     <td class="px-6 py-4 text-zinc-600 dark:text-zinc-400">{{ $tenant->cidade }} / {{ $tenant->estado }}</td>
                     <td class="px-6 py-4 text-zinc-600 dark:text-zinc-400">{{ $tenant->telefone }}</td>
                     <td class="px-6 py-4 text-zinc-500">{{ $tenant->created_at->format('d/m/Y') }}</td>
+                    <td class="px-6 py-4 text-right">
+                        <x-button variant="ghost" size="sm" wire:click="edit({{ $tenant->id }})">
+                            {{ __('Gerenciar') }}
+                        </x-button>
+                    </td>
                 </tr>
             @endforeach
         </x-table>
     </div>
+    <livewire:sistema.tenant-form />
 </div>

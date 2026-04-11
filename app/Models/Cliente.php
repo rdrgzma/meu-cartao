@@ -2,29 +2,39 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Tenantable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\Tenantable;
 
 class Cliente extends Model
 {
     use HasFactory, Tenantable;
- protected $fillable = [
-    'tenant_id',
-    'nome',
-    'cpf',
-    'cns', // novo campo
-    'telefone',
-    'email',
-    'data_adesao',
-    'status',
-    'plano_id'
-];
+
+    protected function cns(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => empty($value) ? null : $value,
+        );
+    }
+
+    protected $fillable = [
+        'tenant_id',
+        'nome',
+        'cpf',
+        'cns', // novo campo
+        'telefone',
+        'email',
+        'data_adesao',
+        'status',
+        'plano_id',
+    ];
 
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
     }
+
     public function plano()
     {
         return $this->belongsTo(Plano::class);
@@ -34,7 +44,8 @@ class Cliente extends Model
     {
         return $this->hasMany(Mensalidade::class);
     }
-        public function historicoPlanos()
+
+    public function historicoPlanos()
     {
         return $this->hasMany(ClientePlano::class);
     }

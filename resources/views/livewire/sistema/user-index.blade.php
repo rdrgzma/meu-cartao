@@ -5,7 +5,9 @@
             <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ __('Gerencie as contas de acesso e níveis de permissão.') }}</p>
         </div>
         <div>
-            {{-- Ações futuras --}}
+            <x-button variant="primary" icon="plus" wire:click="create">
+                {{ __('Novo Usuário') }}
+            </x-button>
         </div>
     </div>
 

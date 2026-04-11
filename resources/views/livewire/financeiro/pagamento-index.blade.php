@@ -39,7 +39,7 @@
                 <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors text-sm">
                     <td class="px-6 py-4 text-zinc-500">{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y H:i') }}</td>
                     <td class="px-6 py-4 font-semibold text-zinc-900 dark:text-white">{{ $pagamento->mensalidade->cliente->nome ?? 'Excluído' }}</td>
-                    <td class="px-6 py-4 text-zinc-500">{{ \Carbon\Carbon::parse($pagamento->mensalidade->mes_referencia)->format('m/Y') }}</td>
+                    <td class="px-6 py-4 text-zinc-500">{{ \Carbon\Carbon::parse($pagamento->mensalidade->vencimento)->format('m/Y') }}</td>
                     <td class="px-6 py-4 capitalize text-zinc-600 dark:text-zinc-400">{{ $pagamento->metodo ?? 'Dinheiro' }}</td>
                     <td class="px-6 py-4 text-green-600 dark:text-green-400 font-bold font-mono">R$ {{ number_format($pagamento->valor, 2, ',', '.') }}</td>
                 </tr>

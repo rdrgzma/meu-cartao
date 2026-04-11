@@ -47,8 +47,14 @@ class TenantMiddleware
             abort(403, 'Tenant não identificado. Verifique seu cadastro.');
         }
 
-        // 🔥 Armazena globalmente
-        app()->instance('tenant', $tenant);
+        if ($tenant) {
+            // 🔥 Bloquear acesso se a unidade estiver inativa (exceto para Super Admin)
+            if ($tenant->status === 'inativo' && (!auth()->check() || auth()->user()->funcao !== 'sistema')) {
+                abort(403, 'Esta unidade está temporariamente inativa. Entre em contato com o suporte.');
+            }
+
+            app()->instance('tenant', $tenant);
+        }
 
         return $next($request);
     }

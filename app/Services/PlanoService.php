@@ -38,15 +38,31 @@ class PlanoService
      */
     public function criar(array $data, array $especialidades = [], array $carencias = []): Plano
     {
-        return DB::transaction(function () use ($data, $especialidades, $carencias) {
+        $plano = DB::transaction(function () use ($data, $especialidades, $carencias) {
             $plano = Plano::create($data);
 
-            if (!empty($especialidades)) {
+            if (! empty($especialidades)) {
                 $this->syncRelationships($plano, $especialidades, $carencias);
             }
 
             return $plano;
         });
+        if ($plano) {
+            LogService::registrar(
+                'Planos',
+                'Novo Plano',
+                "Plano {$plano->nome} cadastrado no valor de R$ ".number_format($plano->valor, 2, ',', '.'),
+                [
+                    'plano_id' => $plano->id,
+                    'valor' => $plano->valor,
+                    'especialidades' => $especialidades,
+                    'carencias' => $carencias,
+                ]
+            );
+        }
+
+        return $plano;
+
     }
 
     /**
@@ -54,10 +70,26 @@ class PlanoService
      */
     public function update(Plano $plano, array $data, array $especialidades = [], array $carencias = []): bool
     {
-        return DB::transaction(function () use ($plano, $data, $especialidades, $carencias) {
+        $valorAntigo = $plano->valor;
+
+        return DB::transaction(function () use ($plano, $data, $especialidades, $carencias, $valorAntigo) {
             $updated = $plano->update($data);
 
             $this->syncRelationships($plano, $especialidades, $carencias);
+            if ($updated) {
+                LogService::registrar(
+                    'Planos',
+                    'Atualização de Plano',
+                    "Plano {$plano->nome} atualizado.",
+                    [
+                        'plano_id' => $plano->id,
+                        'valor_novo' => $plano->valor,
+                        'valor_antigo' => $valorAntigo,
+                        'especialidades' => $especialidades,
+                        'carencias' => $carencias,
+                    ]
+                );
+            }
 
             return $updated;
         });
@@ -81,7 +113,7 @@ class PlanoService
 
         // Atualiza ou cria as novas carências
         foreach ($carencias as $especialidadeId => $dias) {
-            if (in_array((string)$especialidadeId, $especialidades)) {
+            if (in_array((string) $especialidadeId, $especialidades)) {
                 $plano->carencias()->updateOrCreate(
                     ['especialidade_id' => $especialidadeId],
                     ['dias' => $dias ?? 0]
@@ -95,6 +127,16 @@ class PlanoService
      */
     public function delete(Plano $plano): bool
     {
-        return $plano->delete();
+        $sucesso = $plano->delete();
+        if ($sucesso) {
+            LogService::registrar(
+                'Planos',
+                'Exclusão de Plano',
+                "Plano {$plano->nome} excluído.",
+                ['plano_id' => $plano->id]
+            );
+        }
+
+        return $sucesso;
     }
 }

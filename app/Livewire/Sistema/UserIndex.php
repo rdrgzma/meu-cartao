@@ -6,11 +6,18 @@ use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 
 #[Layout('components.layouts.app')]
 class UserIndex extends Component
 {
     use WithPagination;
+
+    #[On('userUpdated')]
+    public function refresh(): void
+    {
+        // Apenas para forçar renderização
+    }
     
     public function mount(): void
     {

@@ -91,7 +91,7 @@
                                 variant="ghost" 
                                 size="sm" 
                                 icon="shield-check"
-                                @click="$dispatch('open-modal', 'baixa-modal'); $dispatchTo('financeiro.baixa-modal', 'setMensalidade', { id: {{ $mensalidade->id }} })"
+                                wire:click="darBaixa({{ $mensalidade->id }})"
                             >
                                 {{ __('Dar Baixa') }}
                             </x-button>
