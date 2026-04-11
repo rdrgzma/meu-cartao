@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Cliente;
-use App\Models\Mensalidade;
+use App\Models\Pagamento; // <-- Trocado de Mensalidade para Pagamento
 use App\Models\Parceiro;
 use Illuminate\Support\Facades\DB;
 
@@ -17,9 +17,12 @@ class RelatorioService
         return [
             'clientes_ativos' => Cliente::where('status', 'ativo')->count(),
             'clientes_inadimplentes' => Cliente::where('status', 'inadimplente')->count(),
-            'faturamento_mes' => (float) Mensalidade::whereMonth('data_pagamento', now()->month)
+            
+            // Corrigido para somar o 'valor' na tabela de Pagamentos
+            'faturamento_mes' => (float) Pagamento::whereMonth('data_pagamento', now()->month)
                 ->whereYear('data_pagamento', now()->year)
-                ->sum('valor_pago'),
+                ->sum('valor'),
+                
             'parceiros_ativos' => Parceiro::where('status', 'ativo')->count(),
             'cresciment_mensal' => $this->calcularCrescimento(),
         ];
@@ -42,9 +45,10 @@ class RelatorioService
      */
     public function faturamentoPorMes(): array
     {
-        return Mensalidade::select(
-            DB::raw('strftime("%m", data_pagamento) as mes'),
-            DB::raw('SUM(valor_pago) as total')
+        // Corrigido para modelo Pagamento e ajustado strftime para sintaxe MySQL
+        return Pagamento::select(
+            DB::raw('MONTH(data_pagamento) as mes'),
+            DB::raw('SUM(valor) as total')
         )
             ->whereNotNull('data_pagamento')
             ->whereYear('data_pagamento', now()->year)
