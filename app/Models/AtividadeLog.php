@@ -70,6 +70,7 @@ class AtividadeLog extends Model
             'especialidade_id', 'especialidades' => Especialidade::find($value)?->nome,
             'user_id' => User::find($value)?->name,
             'tenant_id' => ($t = Tenant::find($value)) ? "{$t->nome} (ID: #{$t->id} | Doc: " . ($t->documento ?? 'N/A') . ")" : null,
+            'mensalidade_id' => ($m = Mensalidade::find($value)) ? "Ref: " . $m->vencimento->format('m/Y') : null,
             default => null,
         };
     }
