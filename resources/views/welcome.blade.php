@@ -87,9 +87,9 @@
                     </p>
 
                     <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
-                        <x-button variant="primary" size="lg" class="w-full sm:w-auto px-12 h-16 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-lg font-black shadow-2xl shadow-emerald-600/30 border-none">
+                        <a href="https://wa.me/555192888828?text={{ urlencode('Olá! Vi o site e gostaria de começar a usar o ZapFlow Health OS.') }}" target="_blank" class="w-full sm:w-auto px-12 h-16 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-lg font-black shadow-2xl shadow-emerald-600/30 border-none flex items-center justify-center transition-all active:scale-95">
                             Começar Agora
-                        </x-button>
+                        </a>
                         <div class="flex items-center gap-3 group cursor-pointer">
                             <div class="w-12 h-12 rounded-full border border-zinc-800 flex items-center justify-center group-hover:border-emerald-500/50 transition-colors">
                                 <x-icons.document-text class="w-5 h-5 text-zinc-500 group-hover:text-emerald-500" />
@@ -252,7 +252,26 @@
         </div>
     </section>
 
-    {{-- Footer --}}
+    {{-- Contact Section --}}
+    <section id="contato" class="py-32 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="relative rounded-[3rem] overflow-hidden bg-zinc-900 border border-zinc-800 p-12 lg:p-24 text-center">
+                <div class="absolute inset-0 bg-emerald-500/5 blur-[100px] -z-10"></div>
+                <div class="max-w-3xl mx-auto space-y-8">
+                    <h2 class="text-4xl lg:text-6xl font-black text-white leading-tight">Pronto para transformar sua <br><span class="text-emerald-500">operação de saúde?</span></h2>
+                    <p class="text-lg text-zinc-400 font-medium">Agende uma demonstração agora e veja como o ZapFlow Health OS pode escalar seu negócio.</p>
+                    
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
+                        <a href="https://wa.me/555192888828?text={{ urlencode('Olá! Gostaria de agendar uma demonstração do ZapFlow Health OS.') }}" target="_blank" class="w-full sm:w-auto px-12 py-5 rounded-2xl bg-emerald-500 text-zinc-950 text-lg font-black uppercase tracking-widest hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-3">
+                            <x-icons.chat-bubble-left-right class="w-6 h-6" />
+                            Agendar via WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <footer class="py-20 border-t border-zinc-900 mt-20">
         <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
             <div class="md:col-span-2 space-y-6">

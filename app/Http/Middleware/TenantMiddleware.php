@@ -29,9 +29,22 @@ class TenantMiddleware
         }
 
         if (! $tenant) {
-            return response()->json([
-                'erro' => 'Tenant não identificado',
-            ], 403);
+            // Se o usuário não estiver logado, permite passar para que o middleware 'auth' redirecione para login
+            if (! auth()->check()) {
+                return $next($request);
+            }
+
+            // Se for uma requisição API ou esperar JSON, retorna o erro em JSON
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'erro' => 'Tenant não identificado',
+                ], 403);
+            }
+
+            // Para rotas web, se não identificou tenant e está logado,
+            // talvez o usuário não tenha tenant (ex: erro de cadastro)
+            // Aborta com erro amigável ou redireciona
+            abort(403, 'Tenant não identificado. Verifique seu cadastro.');
         }
 
         // 🔥 Armazena globalmente

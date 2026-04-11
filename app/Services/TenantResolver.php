@@ -26,7 +26,9 @@ class TenantResolver
         if (count($parts) > 2) {
             $slug = $parts[0];
 
-            return Tenant::where('slug', $slug)->first();
+            if ($tenant = Tenant::where('slug', $slug)->first()) {
+                return $tenant;
+            }
         }
 
         // 3. Usuário autenticado
